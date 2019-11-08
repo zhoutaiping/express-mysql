@@ -8,8 +8,14 @@ var resData = {
 
 /* GET home page. */
 router.get('/getUserAll', function(req, res, next) {
+  let page = 1; //默认为1
+  let pageSize = 10; //一页条数
+  if (req.query.page) page = parseInt(req.query.page);
+  if (req.query.pageSize) pageSize = parseInt(req.query.pageSize);
+ 
+  const sql =  'SELECT * FROM user limit ' + pageSize + ' offset ' + pageSize * (page - 1);
   // res.render('index', { title: 'Express', params: req.param });
-  DB(`select * from user`, (error, results, fields) => {
+  DB(sql, (error, results, fields) => {
     if (error) {
       res
         .status(500)
@@ -29,7 +35,7 @@ router.get('/getUserAll', function(req, res, next) {
     } else {
       res
         .status(200)
-        .send({ code: 1, msg: '无数据 error', total: 0, data: [] })
+        .send({ code: 1, msg: '无数据', total: 0, data: [] })
         .end()
     }
   })
